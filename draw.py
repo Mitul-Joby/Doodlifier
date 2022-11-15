@@ -10,8 +10,8 @@ ctypes.windll.shcore.SetProcessDpiAwareness(True)
 pygame.init()
 fps = 300
 fpsClock = pygame.time.Clock()
-width, height = 640, 480
-screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+width, height = 1920, 1080
+screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
 
 font = pygame.font.SysFont('Arial', 20)
 
@@ -28,7 +28,7 @@ brushSize = 30
 brushSizeSteps = 3
 
 # Drawing Area Size
-canvasSize = [800, 800]
+canvasSize = [700, 700]
 
 # Button Class
 class Button():
@@ -85,19 +85,21 @@ class Button():
 
 # Handler Functions
 
-
 # Changing the Color
 def changeColor(color):
     global drawColor
     drawColor = color
 
+def clearScreen():
+    canvas.fill((255,255,255))
+
 # Changing the Brush Size
-def changebrushSize(dir):
-    global brushSize
-    if dir == 'greater':
-        brushSize += brushSizeSteps
-    else:
-        brushSize -= brushSizeSteps
+# def changebrushSize(dir):
+#     global brushSize
+#     if dir == 'greater':
+#         brushSize += brushSizeSteps
+#     else:
+#         brushSize -= brushSizeSteps
 
 # Save the surface to the Disk
 def save():
@@ -110,12 +112,10 @@ buttonHeight = 35
 # Buttons and their respective functions.
 buttons = [
     ['Black', lambda: changeColor([0, 0, 0])],
-    ['White', lambda: changeColor([255, 255, 255])],
-    ['Blue', lambda: changeColor([0, 0, 255])],
-    ['Green', lambda: changeColor([0, 255, 0])],
-    ['Brush Larger', lambda: changebrushSize('greater')],
-    ['Brush Smaller', lambda: changebrushSize('smaller')],
-    ['Save', save],
+    ['Eraser', lambda: changeColor([255, 255, 255])],
+    ['Clear', lambda: clearScreen()],
+    ['Predict', save],
+    ['Quit', quit],
 ]
 
 # Making the buttons
