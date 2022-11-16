@@ -1,0 +1,20 @@
+car
+flower
+donut
+eye
+ladder
+mushroom
+wheel
+watermelon
+television
+triangle
+envelope
+bucket
+bandage
+eyeglasses
+light bulb
+lollipop
+ice cream
+hand
+dumbbell
+umbrella
