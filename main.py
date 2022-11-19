@@ -1,10 +1,22 @@
+import os
 import sys
 import cv2
 import pygame
 import numpy as np
-from ctypes import windll
+import ctypes 
 from predict import predict_image
 from keras.models import load_model
+
+from generate import doodle, alphabet
+
+if not os.path.exists('models/doodle.h5') or not os.path.exists('models/doodle.txt'):
+    print('\nNo doodle model found. Running doodle.py')
+    doodle.generate()
+    print('Done')
+if not os.path.exists('models/alphabet.h5') or not os.path.exists('models/alphabet.txt'):
+    print('\nNo alphabet model found. Running alphabet.py')
+    alphabet.generate()
+    print('Done')
 
 models = {
     'doodle': load_model('models/doodle.h5'),
@@ -31,7 +43,10 @@ labelWidth, labelHeight   = 400, 100
 
 renderObjects = []
 
-windll.shcore.SetProcessDpiAwareness(True)
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(1)
+except:
+    pass
 
 pygame.init()
 
@@ -111,7 +126,7 @@ class Label():
         renderObjects.append(self)
 
     def process(self):
-        self.buttonSurface.fill("#ffffff")
+        self.buttonSurface.fill('#ffffff')
         self.buttonSurface.blit(self.buttonSurf, [
             self.buttonRect.width/2 - self.buttonSurf.get_rect().width/2,
             self.buttonRect.height/2 - self.buttonSurf.get_rect().height/2
@@ -131,14 +146,15 @@ def clearScreen():
         Label.setLabel('')
 
 def sendPredict():
-    pygame.image.save(canvas, "images/canvas.png")
-    canvasImage = cv2.imread('images/canvas.png', cv2.IMREAD_GRAYSCALE)
-    canvasImage = cv2.resize(canvasImage, (28, 28))
-    canvasImage = np.array(canvasImage)
-    canvasImage = canvasImage.reshape(28, 28, 1).astype('float32')
-    canvasImage /= 255.0
-    canvasImage = 1 - canvasImage
-    predictions = predict_image(model, modelclass, canvasImage)
+    image = pygame.surfarray.array3d(canvas)
+    image = cv2.resize(image, (28, 28))
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = cv2.bitwise_not(image)
+    image = image / 255.0
+    image = image.reshape(28, 28, 1)
+    image = np.rot90(image,-1)
+
+    predictions = predict_image(model, modelclass, image)
     index = 0
     for text in predictions:
         formattedText = text[0] + ' - ' + str(round(text[1], 2)) + '%'
@@ -170,7 +186,7 @@ buttons = [
 labels = [ '', '', '', '', '' ]
 Labels = []
 
-modelLabel = Label(screenWidth - 500, labelWidth - 100 , labelWidth, labelHeight, "DOODLE MODE")
+modelLabel = Label(screenWidth - 500, labelWidth - 100 , labelWidth, labelHeight, 'DOODLE MODE')
 
 for index, buttonName in enumerate(buttons):
     Button(index * (buttonWidth + 10) + 10, 10, buttonWidth, buttonHeight, buttonName[0], buttonName[1])

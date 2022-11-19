@@ -2,4 +2,5 @@ keras==2.10.0
 matplotlib==3.5.2
 numpy==1.22.3
 opencv_python==4.5.5.64
+progressbar33==2.4
 pygame==2.1.2
